@@ -254,3 +254,6 @@ fabric.properties
 .cxx
 local.properties
 
+# Firebase
+*google-services.json
+
