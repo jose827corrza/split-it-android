@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.josedev.splitit.navigation.routes.AppRoute
 import com.josedev.splitit.screens.HomeScreen
 import com.josedev.splitit.screens.LoginScreen
@@ -15,10 +17,11 @@ import com.josedev.splitit.screens.SplashScreen
 fun AppNavigation(modifier: Modifier = Modifier) {
 
     val appNavController = rememberNavController()
+    val auth = Firebase.auth.currentUser
 
     NavHost(navController = appNavController, startDestination = AppRoute.Splash().route){
         composable(AppRoute.Splash().route){
-            SplashScreen(appNavController)
+            SplashScreen(appNavController, auth)
         }
         composable(AppRoute.Login().route){
             LoginScreen(appNavController)

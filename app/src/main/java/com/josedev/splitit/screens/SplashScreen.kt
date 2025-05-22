@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseUser
 import com.josedev.splitit.R
 import com.josedev.splitit.navigation.routes.AppRoute
 import kotlinx.coroutines.delay
@@ -23,12 +24,18 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     nav: NavController,
-    modifier: Modifier = Modifier)
+    auth: FirebaseUser?,
+    modifier: Modifier = Modifier
+)
 {
     LaunchedEffect(key1 = true){
         delay(1000)
         nav.popBackStack()
-        nav.navigate(AppRoute.Login().route)
+        if(auth != null) {
+            nav.navigate(AppRoute.Home().route)
+        } else {
+            nav.navigate(AppRoute.Login().route)
+        }
     }
 
     Splash()

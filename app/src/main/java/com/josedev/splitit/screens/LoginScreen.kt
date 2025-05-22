@@ -1,5 +1,6 @@
 package com.josedev.splitit.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -12,33 +13,41 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.josedev.splitit.navigation.routes.AppRoute
+import com.josedev.splitit.presentation.LoginVM
+import com.josedev.splitit.repository.events.AuthEvent
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     nav: NavController,
-    modifier: Modifier = Modifier)
+    modifier: Modifier = Modifier,
+    viewModel: LoginVM = hiltViewModel()
+)
 {
-
+    val state by viewModel.state.collectAsState()
+    val scope = rememberCoroutineScope()
     var email by remember {
         mutableStateOf("")
     }
@@ -81,19 +90,45 @@ fun LoginScreen(
             visualTransformation = if(isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None)
         Spacer(modifier = Modifier.height(40.dp))
         FilledTonalButton(onClick = {
-            nav.navigate(AppRoute.Home().route)
+            scope.launch {
+                viewModel.onEvent(AuthEvent.Login(email, password))
+                when(state.isLoading){
+                    true -> TODO()
+                    false -> {
+                        if(state.user != null){
+                            nav.navigate(AppRoute.Home().route)
+                        }
+                    }
+                }
+            }
+            if(state.user != null){
+                nav.navigate(AppRoute.Home().route)
+            }
         },
             modifier = Modifier.width(200.dp))
         {
             Text(text = "Log in")
         }
         ElevatedButton(onClick = {
-            nav.navigate(AppRoute.Home().route)
+            scope.launch {
+                viewModel.onEvent(AuthEvent.SignUp(email, password))
+                when(state.isLoading){
+                    true -> TODO()
+                    false -> {
+                        if(state.user != null){
+                            nav.navigate(AppRoute.Home().route)
+                        }
+                    }
+                }
+
+            }
         },
             modifier = Modifier.width(200.dp))
         {
             Text(text = "Sign up")
         }
     }
-
+    if(state.error != null) {
+        Toast.makeText(LocalContext.current, "Check your credentials. Error: ${state.error}", Toast.LENGTH_LONG).show()
+    }
 }
