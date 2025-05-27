@@ -7,11 +7,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.josedev.splitit.components.ListOfCards
 import com.josedev.splitit.navigation.routes.AppRoute
+import com.josedev.splitit.presentation.HomeVM
 import com.josedev.splitit.presentation.LoginVM
 import com.josedev.splitit.repository.events.AuthEvent
 import kotlinx.coroutines.launch
@@ -20,9 +23,11 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     nav: NavController,
     modifier: Modifier = Modifier,
-    viewModel: LoginVM = hiltViewModel()
+    loginViewModel: LoginVM = hiltViewModel(),
+    homeViewModel: HomeVM = hiltViewModel()
 )
 {
+    val state = homeViewModel.state.collectAsState()
 
     val scope = rememberCoroutineScope()
 
@@ -32,10 +37,10 @@ fun HomeScreen(
         Column (
             modifier = modifier.padding(innerPadding)
         ){
-            Text(text = "Home")
+            ListOfCards(state.value.projects, nav)
             Button(onClick = {
                 scope.launch {
-                    viewModel.onEvent(AuthEvent.SignOut)
+                    loginViewModel.onEvent(AuthEvent.SignOut)
                     nav.navigate(AppRoute.Login().route)
                 }
             }){
