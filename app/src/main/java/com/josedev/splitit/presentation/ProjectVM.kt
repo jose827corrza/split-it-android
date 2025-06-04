@@ -1,10 +1,9 @@
 package com.josedev.splitit.presentation
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.josedev.splitit.domain.states.HomeState
-import com.josedev.splitit.repository.events.HomeEvent
+import com.josedev.splitit.domain.states.ProjectState
+import com.josedev.splitit.repository.events.ProjectEvent
 import com.josedev.splitit.repository.storage.StorageRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,22 +14,22 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeVM @Inject constructor(
+class ProjectVM @Inject constructor(
     private val storageRepository: StorageRepositoryImpl
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
-    val state: StateFlow<HomeState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(ProjectState())
+    val state: StateFlow<ProjectState> = _state.asStateFlow()
 
-    fun onEvent(event: HomeEvent){
+    fun onEvent(event: ProjectEvent){
         when(event){
-            is HomeEvent.GetAllProjects -> {
+            is ProjectEvent.GetProjectInformation -> {
                 viewModelScope.launch {
-                    val result = storageRepository.getAllProjects()
+                    val result = storageRepository.getProjectInformation(event.projectId)
                     if(result.data!=null){
                         _state.update {
                             it.copy(
-                                projects = result.data,
+                                project = result.data,
                                 isLoading = false
                             )
                         }

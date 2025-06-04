@@ -6,11 +6,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.josedev.splitit.components.NavComponent
 import com.josedev.splitit.navigation.routes.AppRoute
 import com.josedev.splitit.screens.HomeScreen
 import com.josedev.splitit.screens.LoginScreen
+import com.josedev.splitit.screens.ProjectInfoScreen
 import com.josedev.splitit.screens.SplashScreen
 
 @Composable
@@ -28,6 +31,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable(AppRoute.Home().route){
             HomeScreen(appNavController, modifier = modifier)
+        }
+        composable(AppRoute.Home().route){
+            NavComponent(appNavController)
+        }
+        composable(AppRoute.ProjectInfo().route){
+            ProjectInfoScreen(appNavController, it.arguments?.getString("projectId"),modifier = modifier)
         }
     }
 }

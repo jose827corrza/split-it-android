@@ -22,8 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.Timestamp
 import com.josedev.splitit.domain.entities.Project
 import com.josedev.splitit.navigation.routes.AppRoute
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +39,7 @@ fun CardComponent(
 
     Card (
         onClick = {
-            nav.navigate(AppRoute.Home())
+            nav.navigate(AppRoute.ProjectInfoWithId(info.projectId).route)
         },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -53,15 +58,25 @@ fun CardComponent(
                 Text(
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    text = "title",
+                    text = info.name.orEmpty(),
                     modifier = Modifier. padding(15.dp))
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    textAlign = TextAlign.Justify,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.ExtraLight,
-                    text = "Created At: ")
+                Row (){
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        textAlign = TextAlign.Justify,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Light,
+                        text = "Created At: "
+                    )
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        textAlign = TextAlign.Justify,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraLight,
+                        text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(info.createdAt!!.toDate())
+                    )
+                }
             }
         }
     }

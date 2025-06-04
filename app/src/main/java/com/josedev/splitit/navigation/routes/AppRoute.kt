@@ -5,4 +5,7 @@ sealed class AppRoute(val route: String) {
     class Login: AppRoute("login")
     class SignUp: AppRoute("signup")
     class Home: AppRoute("home")
+
+    class ProjectInfo: AppRoute("projectInfo/{projectId}")
+    class ProjectInfoWithId(projectId: String?): AppRoute("projectInfo/$projectId")
 }
